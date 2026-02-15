@@ -523,7 +523,7 @@ def run_silu(in_features: Float[Tensor, " ..."]) -> Float[Tensor, " ..."]:
     """
     from student.custom_modules import SiLU
     layer = SiLU()
-    return layer(in_features)r
+    return layer(in_features)
 
 
 def run_get_batch(
