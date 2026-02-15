@@ -102,6 +102,31 @@ class SwiGLU(nn.Module):
         output = self.W2(gated_silu)
         return output
 
+# Silu
+class SiLU(nn.Module):
+    def __init__(self, d_model=None, d_ff=None, device=None, dtype=None):
+        super().__init__()
+        self.d_model = d_model
+        self.d_ff = d_ff
+
+        if d_model is not None:
+            if d_ff is None:
+                d_ff = 4 * d_model
+            self.d_ff = d_ff
+            self.W1 = Linear(d_model, d_ff, device=device, dtype=dtype)
+            self.W2 = Linear(d_ff, d_model, device=device, dtype=dtype)
+        else:
+            self.W1 = None
+            self.W2 = None
+
+    def forward(self, x):
+        if self.W1 is not None:
+            h = self.W1(x)
+            h = h * torch.sigmoid(h)
+            return self.W2(h)
+        else:
+            # Just the activation
+            return x * torch.sigmoid(x)
 
 class RotatryPositionalEmbedding(nn.Module):
     def __init__(self,theta,d_k,max_seq_len,device=None,dtype=None):
