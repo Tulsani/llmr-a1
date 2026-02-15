@@ -38,7 +38,7 @@ class Embedding(nn.Module):
         )
 
         std = math.sqrt(2.0 / (self.num_embeddings + self.embedding_dim))
-        nn.init.trunc_normal_(self.weight, std=1, mean=0.0, a=-3*std, b=3*std)
+        nn.init.trunc_normal_(self.weight, std=1, mean=0.0, a=-3, b=3)
 
     
     def forward(self, token_ids):
