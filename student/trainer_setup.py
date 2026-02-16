@@ -5,8 +5,8 @@ from pathlib import Path
 import argparse
 # custom
 from student.transformer import TransformerLM
-from student.custom_optimizer import AdamW , cross_entropy, gradient_clipping, get_lr_cosine_schedule
-from student.utils import get_batch , save_checkpoint, load_checkpoint
+from student.custom_optimizer import AdamW , gradient_clipping, get_lr_cosine_schedule
+from student.utils import data_loader , save_checkpoint, load_checkpoint ,cross_entropy
 import time
 
 
@@ -57,7 +57,7 @@ def train(
     #Starting training loop
     
     print(f"\nLoading training data {training_data_path}")
-    training_data = np.load(training_data,mmap_mode='r')
+    training_data = np.load(training_data_path,mmap_mode='r')
     print(f"\loaded training data: {len(training_data)}")
 
     #load validation data
@@ -131,7 +131,7 @@ def train(
             param_group['lr']= lr
         
         # get training batch
-        inputs,targets = get_batch(
+        inputs,targets = data_loader(
             training_data,
             batch_size,
             context_length,
@@ -177,7 +177,7 @@ def train(
 
             with torch.no_grad():
                 for i in range(eval_iterations):
-                    val_inputs,val_targets = get_batch(
+                    val_inputs,val_targets = data_loader(
                         val_data,
                         batch_size,
                         context_length,
@@ -256,8 +256,8 @@ def main():
     parser.add_argument("--grad_clip_norm", type=float, default=1.0)
 
    
-    parser.add_argument("--train_data_path", type=str, required=True)
-    parser.add_argument("--val_data_path", type=str, default=None)
+    parser.add_argument("--train_data_path", default="./encoded_datasets/tinystories_train.npy", type=str)
+    parser.add_argument("--val_data_path", default="./encoded_datasets/tinystories_val.npy")
 
     
     parser.add_argument("--checkpoint_dir", type=str, default="./checkpoints")
@@ -270,7 +270,7 @@ def main():
     parser.add_argument("--eval_iterations", type=int, default=20)
 
     
-    parser.add_argument("--device", type=str, default="cuda")
+    parser.add_argument("--device", type=str, default="cpu")
     parser.add_argument("--seed", type=int, default=42)
 
     args = parser.parse_args()
@@ -314,8 +314,4 @@ if __name__ == "__main__":
 
 
 
-        
-
-
-
-
+    

@@ -41,7 +41,7 @@ def decode(model,prompt,max_new_tokens =50,
                 sorted_probs,sorted_indices = torch.sort(probs, descending=True,dim=-1)
 
                 # cumulating probs
-                cumulative_probs = torch.cunsum(sorted_probs,dim=-1)
+                cumulative_probs = torch.cumsum(sorted_probs,dim=-1)
 
                 # get smallest set where cumulative prob >=top_k
                 # remove tokens with probs > threholds
